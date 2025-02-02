@@ -173,7 +173,7 @@ email [adrian@foxglove.dev](adrian@foxglove.dev) , [join our Slack community](ht
 
 ## A quick'n'dirty GUI to display Joy-Con orientation
 
-Used ChatGPT to mock up a quick'n'dirty GUI that would display the orientation of the joycons, see [joy_con_gui.py](./src/joy_con_gui.py)
+Used ChatGPT to mock up a quick'n'dirty GUI that would display the orientation of the joycons. As a first step [joy_con_gui.py](./src/joy_con_gui.py) draws two blocks resembling the Joy-Cons and allows to rotate them with the keyboard.
 
 ![](./assets/gui.gif)
 
@@ -193,11 +193,14 @@ Used ChatGPT to mock up a quick'n'dirty GUI that would display the orientation o
 - **J** → Rotate **Left** (tilt counterclockwise around Y-axis)
 - **L** → Rotate **Right** (tilt clockwise around Y-axis)
 
-There is one missing rotation axis!
+Note one of the rotation axes is missing !
 
 ## Getting orientation out of the Joy-Cons
 
-Inspiration came from this project https://github.com/AlmondGod/Nintendo-Aloha (see blog post [here](https://rain-argon-1fc.notion.site/ALOHA-Bigym-Joycon-ACT-12063b18e1df80f99f84dc2fcc0721ac)) which used this promising library: https://github.com/tocoteron/joycon-python (there may be some recent forks with added functionality)
+Next I want to get the orientation from the motion control data streamed by the Joy-Cons. Like this:
+![](https://camo.githubusercontent.com/119ef219c6ba003403c63c1455f4498f4f71c4f63ced836c57bbab9811c71495/68747470733a2f2f692e696d6775722e636f6d2f426256365372672e676966)
+
+Inspiration came from this project https://github.com/AlmondGod/Nintendo-Aloha (see blog post [here](https://rain-argon-1fc.notion.site/ALOHA-Bigym-Joycon-ACT-12063b18e1df80f99f84dc2fcc0721ac)) which used this promising python library: https://github.com/tocoteron/joycon-python (there may be some recent forks with added functionality)
 
 ```bash
 $ pip install joycon-python hidapi pyglm
@@ -307,3 +310,11 @@ $ dmesg | grep -i nintendo
 But still `hid.enumerate()` does not detect the joycons. 
 
 I'll try on a more modern kernel...
+
+Other options to explore:
+
+* [JoyconLib](https://github.com/Looking-Glass/JoyconLib/blob/master/README.md) is a library for Unity featuring button/stick polling, HD rumble, and accelerometer data processing. By Evan Kahn / @wormyrocks. Discussion: https://gbatemp.net/threads/joy-con-unity-library.486629/
+* [JoyCon-Driver](https://github.com/fossephate/JoyCon-Driver) is a Windows Driver for the Nintendo Switch JoyCons and Pro Controller with support for analog stick and motion controls
+* [Nintendo Switch Reverse Engineering](https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering) all you ever wanted to know about the Nintendo. See this issue: [Gyroscope / Accelerometer Status #18](https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering/issues/18)
+
+* A [Joy Con Web HID](https://tomayac.github.io/joy-con-webhid/) - Web HID driver for [Nintendo Joy-Cons](https://en.wikipedia.org/wiki/Joy-Con) with support for all buttons, analog sticks, and the device’s gyroscope and accelerometer sensors.
