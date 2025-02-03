@@ -175,7 +175,7 @@ email [adrian@foxglove.dev](adrian@foxglove.dev) , [join our Slack community](ht
 
 I mocked up a quick'n'dirty GUI to display the orientation of the Joy-Cons. As a first step [joy_con_gui.py](./src/joy_con_gui.py) draws two blocks resembling the Joy-Cons and allows to rotate them with the keyboard.
 
-![](./assets/gui.gif)
+<img src="./assets/gui.gif" style="zoom: 80%;" />
 
 #### **Keyboard Controls:**
 
@@ -198,7 +198,7 @@ Note: the Yaw rotation axis is missing !
 ## Getting orientation out of the Joy-Cons
 
 Next I want to get the orientation from the motion control data streamed by the Joy-Cons. Like this:
-![](https://camo.githubusercontent.com/119ef219c6ba003403c63c1455f4498f4f71c4f63ced836c57bbab9811c71495/68747470733a2f2f692e696d6775722e636f6d2f426256365372672e676966)
+<img src="https://camo.githubusercontent.com/119ef219c6ba003403c63c1455f4498f4f71c4f63ced836c57bbab9811c71495/68747470733a2f2f692e696d6775722e636f6d2f426256365372672e676966" style="zoom:50%;" />
 
 Inspiration came from this project https://github.com/AlmondGod/Nintendo-Aloha (see the [twitter thread](https://x.com/Almondgodd/status/1856891189653340656) and [blog post](https://rain-argon-1fc.notion.site/ALOHA-Bigym-Joycon-ACT-12063b18e1df80f99f84dc2fcc0721ac)) which used this promising python library: https://github.com/tocoteron/joycon-python (there may be some recent forks with added functionality)
 
@@ -462,7 +462,7 @@ Event: time 1738461230.875011, type 3 (EV_ABS), code 2 (ABS_Z), value 4221
 [...]
 ```
 
-Net step is writing a python script that connects to the device using  `evdev` and monitors the stream of events to updates an `orientation` state variable. Note the sign conventions.
+Net step is writing a python script that connects to the device using  `evdev` (see this [python-evdev tutorial](https://python-evdev.readthedocs.io/en/latest/tutorial.html)) and monitors the stream of events to updates an `orientation` state variable. Note the sign conventions.
 
 | ![](./assets/joycon_left_axes.png) | ![](./assets/joycon_right_axes.png) |
 | ---------------------------------- | ----------------------------------- |
@@ -474,7 +474,17 @@ Net step is writing a python script that connects to the device using  `evdev` a
 Check out the video in this [February 3, 2025 at 4:09 AM post](https://bsky.app/profile/did:plc:hi46hk2uywvphbiivmqmqibw/post/3lhakwl27rc2a) by [@aergenium.bsky.social](https://bsky.app/profile/aergenium.bsky.social):
 > I’m looking at using a Nintendo Switch to control my robots. Joy-Cons promise to be fun, and I had a first breakthrough today. A short video, and details in the repo: github.com/mhered/ninte...
 
-Next step is to link this with the GUI.
+Next step is to link this with the GUI - done in `joy_con_gui.py`
 
+<img src="./assets/joycon_gui_demo.gif" style="zoom:50%;" />
 
+## To Do: a nicer GUI using CAD model instead of brick
+
+Found this post on [Rendering STL files with matplotlib using numpy-stl](https://w.wol.ph/2015/07/10/rendering-stl-files-matplotlib-numpy-stl/?utm_source=chatgpt.com).
+
+[numpy-stl](https://numpy-stl.readthedocs.io/en/latest/usage.html) is  python library to manipulate meshes and 3D objects. 
+
+Downloaded a [CAD model of the Joy-Cons](https://grabcad.com/library/nintendo-switch-joy-cons-controllers-1) in STL from GrabCAD, split it in parts using FreeCAD and simplified to a low-poly mesh (~2000 vertices) each using  https://3dless.com/
+
+<img src="./assets/joycon_lowpoly.gif" style="zoom:50%;" />
 

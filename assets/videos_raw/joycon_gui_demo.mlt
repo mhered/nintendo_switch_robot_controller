@@ -1,0 +1,200 @@
+<?xml version="1.0" standalone="no"?>
+<mlt LC_NUMERIC="C" version="7.30.0" title="Shotcut version 25.01.25" producer="main_bin">
+  <profile description="automatic" width="1080" height="1080" progressive="1" sample_aspect_num="1" sample_aspect_den="1" display_aspect_num="1" display_aspect_den="1" frame_rate_num="30" frame_rate_den="1" colorspace="709"/>
+  <playlist id="main_bin">
+    <property name="xml_retain">1</property>
+  </playlist>
+  <producer id="black" in="00:00:00.000" out="00:00:09.633">
+    <property name="length">00:00:09.667</property>
+    <property name="eof">pause</property>
+    <property name="resource">0</property>
+    <property name="aspect_ratio">1</property>
+    <property name="mlt_service">color</property>
+    <property name="mlt_image_format">rgba</property>
+    <property name="set.test_audio">0</property>
+  </producer>
+  <playlist id="background">
+    <entry producer="black" in="00:00:00.000" out="00:00:09.633"/>
+  </playlist>
+  <producer id="producer0" in="00:00:00.000" out="00:00:11.000">
+    <property name="length">00:00:11.033</property>
+    <property name="eof">pause</property>
+    <property name="resource">1.5:joycon_gui_raw_IMG_9193.mp4</property>
+    <property name="aspect_ratio">1</property>
+    <property name="meta.media.nb_streams">7</property>
+    <property name="meta.media.0.stream.type">audio</property>
+    <property name="meta.media.0.codec.sample_fmt">fltp</property>
+    <property name="meta.media.0.codec.sample_rate">44100</property>
+    <property name="meta.media.0.codec.channels">2</property>
+    <property name="meta.media.0.codec.layout">stereo</property>
+    <property name="meta.media.0.codec.name">aac</property>
+    <property name="meta.media.0.codec.long_name">AAC (Advanced Audio Coding)</property>
+    <property name="meta.media.0.codec.bit_rate">160440</property>
+    <property name="meta.attr.0.stream.creation_time.markup">2025-02-03T13:07:44.000000Z</property>
+    <property name="meta.attr.0.stream.handler_name.markup">Core Media Audio</property>
+    <property name="meta.attr.0.stream.vendor_id.markup">[0][0][0][0]</property>
+    <property name="meta.media.1.stream.type">video</property>
+    <property name="meta.media.1.stream.frame_rate">30</property>
+    <property name="meta.media.1.stream.sample_aspect_ratio">0</property>
+    <property name="meta.media.1.codec.width">1080</property>
+    <property name="meta.media.1.codec.height">1080</property>
+    <property name="meta.media.1.codec.rotate">0</property>
+    <property name="meta.media.1.codec.pix_fmt">yuvj420p</property>
+    <property name="meta.media.1.codec.sample_aspect_ratio">0</property>
+    <property name="meta.media.1.codec.colorspace">709</property>
+    <property name="meta.media.1.codec.color_trc">1</property>
+    <property name="meta.media.1.codec.name">h264</property>
+    <property name="meta.media.1.codec.long_name">H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10</property>
+    <property name="meta.media.1.codec.bit_rate">4236429</property>
+    <property name="meta.attr.1.stream.creation_time.markup">2025-02-03T13:07:44.000000Z</property>
+    <property name="meta.attr.1.stream.handler_name.markup">Core Media Video</property>
+    <property name="meta.attr.1.stream.vendor_id.markup">[0][0][0][0]</property>
+    <property name="meta.attr.major_brand.markup">mp42</property>
+    <property name="meta.attr.minor_version.markup">1</property>
+    <property name="meta.attr.compatible_brands.markup">isommp41mp42</property>
+    <property name="meta.attr.creation_time.markup">2025-02-03T13:07:44.000000Z</property>
+    <property name="meta.attr.location.markup">+37.4004-005.9481+17.738998/</property>
+    <property name="seekable">1</property>
+    <property name="meta.media.sample_aspect_num">1</property>
+    <property name="meta.media.sample_aspect_den">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">1</property>
+    <property name="warp_speed">1.5</property>
+    <property name="warp_resource">joycon_gui_raw_IMG_9193.mp4</property>
+    <property name="mlt_service">timewarp</property>
+    <property name="shotcut:producer">avformat</property>
+    <property name="video_delay">0</property>
+    <property name="astream">0</property>
+    <property name="vstream">0</property>
+    <property name="shotcut:hash">563947d600f7cce86ecabe0f47177bd5</property>
+    <property name="shotcut:skipConvert">0</property>
+    <property name="shotcut:caption">joycon_gui_raw_IMG_9193.mp4 (1.5x)</property>
+    <property name="xml">was here</property>
+    <property name="meta.media.frame_rate_num">30</property>
+    <property name="meta.media.frame_rate_den">1</property>
+    <property name="meta.media.colorspace">709</property>
+    <property name="meta.media.color_trc">1</property>
+    <property name="meta.media.has_b_frames">2</property>
+    <property name="meta.media.width">1080</property>
+    <property name="meta.media.height">1080</property>
+    <property name="meta.media.aspect_ratio">1</property>
+    <property name="meta.media.color_range">full</property>
+    <property name="meta.media.top_field_first">0</property>
+    <property name="meta.media.progressive">1</property>
+  </producer>
+  <producer id="producer1" in="00:00:00.000" out="00:00:11.000">
+    <property name="length">00:00:11.033</property>
+    <property name="eof">pause</property>
+    <property name="resource">1.5:joycon_gui_raw_IMG_9193.mp4</property>
+    <property name="aspect_ratio">1</property>
+    <property name="meta.media.nb_streams">7</property>
+    <property name="meta.media.0.stream.type">audio</property>
+    <property name="meta.media.0.codec.sample_fmt">fltp</property>
+    <property name="meta.media.0.codec.sample_rate">44100</property>
+    <property name="meta.media.0.codec.channels">2</property>
+    <property name="meta.media.0.codec.layout">stereo</property>
+    <property name="meta.media.0.codec.name">aac</property>
+    <property name="meta.media.0.codec.long_name">AAC (Advanced Audio Coding)</property>
+    <property name="meta.media.0.codec.bit_rate">160440</property>
+    <property name="meta.attr.0.stream.creation_time.markup">2025-02-03T13:07:44.000000Z</property>
+    <property name="meta.attr.0.stream.handler_name.markup">Core Media Audio</property>
+    <property name="meta.attr.0.stream.vendor_id.markup">[0][0][0][0]</property>
+    <property name="meta.media.1.stream.type">video</property>
+    <property name="meta.media.1.stream.frame_rate">30</property>
+    <property name="meta.media.1.stream.sample_aspect_ratio">0</property>
+    <property name="meta.media.1.codec.width">1080</property>
+    <property name="meta.media.1.codec.height">1080</property>
+    <property name="meta.media.1.codec.rotate">0</property>
+    <property name="meta.media.1.codec.pix_fmt">yuvj420p</property>
+    <property name="meta.media.1.codec.sample_aspect_ratio">0</property>
+    <property name="meta.media.1.codec.colorspace">709</property>
+    <property name="meta.media.1.codec.color_trc">1</property>
+    <property name="meta.media.1.codec.name">h264</property>
+    <property name="meta.media.1.codec.long_name">H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10</property>
+    <property name="meta.media.1.codec.bit_rate">4236429</property>
+    <property name="meta.attr.1.stream.creation_time.markup">2025-02-03T13:07:44.000000Z</property>
+    <property name="meta.attr.1.stream.handler_name.markup">Core Media Video</property>
+    <property name="meta.attr.1.stream.vendor_id.markup">[0][0][0][0]</property>
+    <property name="meta.attr.major_brand.markup">mp42</property>
+    <property name="meta.attr.minor_version.markup">1</property>
+    <property name="meta.attr.compatible_brands.markup">isommp41mp42</property>
+    <property name="meta.attr.creation_time.markup">2025-02-03T13:07:44.000000Z</property>
+    <property name="meta.attr.location.markup">+37.4004-005.9481+17.738998/</property>
+    <property name="seekable">1</property>
+    <property name="meta.media.sample_aspect_num">1</property>
+    <property name="meta.media.sample_aspect_den">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">1</property>
+    <property name="warp_speed">1.5</property>
+    <property name="warp_resource">joycon_gui_raw_IMG_9193.mp4</property>
+    <property name="mlt_service">timewarp</property>
+    <property name="shotcut:producer">avformat</property>
+    <property name="video_delay">0</property>
+    <property name="astream">0</property>
+    <property name="vstream">0</property>
+    <property name="shotcut:hash">563947d600f7cce86ecabe0f47177bd5</property>
+    <property name="shotcut:skipConvert">0</property>
+    <property name="shotcut:caption">joycon_gui_raw_IMG_9193.mp4 (1.5x)</property>
+    <property name="xml">was here</property>
+    <property name="meta.media.frame_rate_num">30</property>
+    <property name="meta.media.frame_rate_den">1</property>
+    <property name="meta.media.colorspace">709</property>
+    <property name="meta.media.color_trc">1</property>
+    <property name="meta.media.has_b_frames">2</property>
+    <property name="meta.media.width">1080</property>
+    <property name="meta.media.height">1080</property>
+    <property name="meta.media.aspect_ratio">1</property>
+    <property name="meta.media.color_range">full</property>
+    <property name="meta.media.top_field_first">0</property>
+    <property name="meta.media.progressive">1</property>
+  </producer>
+  <tractor id="tractor0" in="00:00:00.000" out="00:00:00.633">
+    <property name="shotcut:transition">lumaMix</property>
+    <track producer="producer0" in="00:00:10.100" out="00:00:10.733"/>
+    <track producer="producer1" in="00:00:00.433" out="00:00:01.067"/>
+    <transition id="transition0" out="00:00:00.633">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="factory">loader</property>
+      <property name="mlt_service">luma</property>
+      <property name="alpha_over">1</property>
+      <property name="fix_background_alpha">1</property>
+    </transition>
+    <transition id="transition1" out="00:00:00.633">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="start">-1</property>
+      <property name="accepts_blanks">1</property>
+      <property name="mlt_service">mix</property>
+    </transition>
+  </tractor>
+  <playlist id="playlist0">
+    <property name="shotcut:video">1</property>
+    <property name="shotcut:name">V1</property>
+    <entry producer="producer0" in="00:00:03.767" out="00:00:10.067"/>
+    <entry producer="tractor0" in="00:00:00.000" out="00:00:00.633"/>
+    <entry producer="producer1" in="00:00:01.100" out="00:00:03.733"/>
+  </playlist>
+  <tractor id="tractor1" title="Shotcut version 25.01.25" in="00:00:00.000" out="00:00:09.633">
+    <property name="shotcut">1</property>
+    <property name="shotcut:projectAudioChannels">2</property>
+    <property name="shotcut:projectFolder">0</property>
+    <track producer="background"/>
+    <track producer="playlist0"/>
+    <transition id="transition2">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="mlt_service">mix</property>
+      <property name="always_active">1</property>
+      <property name="sum">1</property>
+    </transition>
+    <transition id="transition3">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="version">0.1</property>
+      <property name="mlt_service">frei0r.cairoblend</property>
+      <property name="threads">0</property>
+      <property name="disable">1</property>
+    </transition>
+  </tractor>
+</mlt>

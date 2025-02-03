@@ -2,29 +2,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import math
+import asyncio
+from myjoycon import myJoyCon 
 
-
-def add_parallelepiped(ax, pose, length, width, height, color, alpha=0.5):
+def draw_brick(ax, cog, euler_angles_radians, length, width, height, color, alpha=0.5):
     """
-    Adds a parallelepiped to the given 3D axis based on its center of gravity (CoG),
+    Draws a brick in the given 3D axis based on its center of gravity (CoG),
     normal vector, and dimensions.
 
     Parameters:
     - ax: Matplotlib 3D axis handler.
-    - pose: Tuple containing the CoG position (x, y, z) and a normal vector (nx, ny, nz).
-    - length: Length of the parallelepiped.
-    - width: Width of the parallelepiped.
-    - height: Height of the parallelepiped.
-    - color: RGB tuple for the parallelepiped color.
-    - alpha: Transparency of the parallelepiped faces.
+    - cog: CoG position (x, y, z) 
+    - euler_angles: roll, pitch, yaw in degrees
+    - length: Length of the brick.
+    - width: Width of the brick.
+    - height: Height of the brick.
+    - color: RGB tuple for the brick color.
+    - alpha: Transparency of the brick faces.
 
     Returns:
-    - True if the parallelepiped is successfully added, False otherwise.
+    - True if the brick is successfully added, False otherwise.
     """
     try:
-        # Unpack pose parameters
-        cog = np.array(pose[:3])  # Center of Gravity
-        normal = np.array(pose[3:])  # Normal vector
+        # extract Euler angles 
+        roll = euler_angles_radians.get('roll', 0.0)
+        pitch = euler_angles_radians.get('pitch', 0.0)
+        yaw = euler_angles_radians.get('yaw', 0.0)
+
+        # Compute the normal vector
+        normal = orientation_vector_from_rpy(roll, pitch, yaw)
 
         # Normalize the normal vector
         normal = normal / np.linalg.norm(normal)
@@ -70,7 +76,7 @@ def add_parallelepiped(ax, pose, length, width, height, color, alpha=0.5):
             [global_vertices[i] for i in [3, 0, 4, 7]],  # Side face
         ]
 
-        # Add the parallelepiped to the 3D axis
+        # Add the brick to the 3D axis
         poly3d = [[list(vertex) for vertex in face] for face in faces]
         ax.add_collection3d(
             Poly3DCollection(
@@ -78,13 +84,20 @@ def add_parallelepiped(ax, pose, length, width, height, color, alpha=0.5):
             )
         )
 
+        # text label
+        ax.text(
+            cog[0], cog[1], cog[2] + height / 2,
+            f"Roll: {math.degrees(euler_angles_radians['roll']):.1f}º\n"
+            f"Pitch: {math.degrees(euler_angles_radians['pitch']):.1f}º",
+            color='black'
+        )
+
         return True  # Successful execution
 
     except Exception as e:
         print(f"Error: {e}")
         return False  # Failed execution
-
-
+ 
 def set_axes_equal(ax):
     """Set equal aspect ratio for 3D plots (for older Matplotlib versions)."""
     x_limits = ax.get_xlim()
@@ -105,7 +118,6 @@ def set_axes_equal(ax):
     ax.set_ylim(mid_y - max_range, mid_y + max_range)
     ax.set_zlim(mid_z - max_range, mid_z + max_range)
 
-
 # Function to initialize figure and axes
 def setup_figure():
     """Creates and returns a Matplotlib 3D figure and axis."""
@@ -119,35 +131,52 @@ def setup_figure():
     return fig, ax
 
 
-length, width, height = 102, 35.9, 13.9  # Joy-Con dimensions in mm
-neon_red = (255 / 255, 60 / 255, 40 / 255)  # Nintendo Switch Neon Joy-Con Red
-neon_blue = (10 / 255, 185 / 255, 230 / 255)  # Nintendo Switch Neon Joy-Con Blue
+def draw_joycons(orientations, ax):
+    """
+    Draws Joy-Cons based on their orientations.
 
+    Parameters:
+    - orientations: Dictionary where keys are device names and values are dictionaries
+                    with 'roll', 'pitch', and 'yaw' angles in degrees.
+                    Example: {"JoyCon_L": {'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0}}
+    """
+    # Joy-Con dimensions in mm
+    length, width, height = 35.9, 102, 13.9
 
-# Function to update the drawing based on new poses
-def update_drawing(ax, left_joy_con_pose, right_joy_con_pose):
-    """Clears the axes and redraws the parallelepipeds at new poses."""
-    ax.cla()  # Clear the axes
+    # Colors
+    neon_red = (255 / 255, 60 / 255, 40 / 255)  # Nintendo Switch Neon Joy-Con Red
+    neon_blue = (10 / 255, 185 / 255, 230 / 255)  # Nintendo Switch Neon Joy-Con Blue
 
-    # Add joy-con L (red)
-    success1 = add_parallelepiped(
-        ax, left_joy_con_pose[0] + left_joy_con_pose[1], 
-        length, width, height, 
-        neon_red
-    )
+    # Base positions for left and right Joy-Cons
+    cog_left = np.array([0, 60, 0])     # Base position for left Joy-Con
+    cog_right = np.array([0, -60, 0])     # Base position for right Joy-Con
+    
+    # Iterate through the orientations dictionary
+    for device_name, angles_degrees in orientations.items():
 
-    # Add joy-con R (blue)
-    success2 = add_parallelepiped(
-        ax, right_joy_con_pose[0] + right_joy_con_pose[1],
-        length, width, height,
-        neon_blue
-    )
+        # Determine position and color based on device name
+        if device_name == "Nintendo Switch Left Joy-Con IMU":
+            position = cog_left
+            color = neon_red
+        elif device_name == "Nintendo Switch Right Joy-Con IMU":
+            position = cog_right
+            color = neon_blue
+        else:
+            # Default position and color for any other device
+            position = np.array([0, 0, 0])
+            color = (0.5, 0.5, 0.5)  # Grey color for unknown devices
 
-    # Adjust axis limits to fit both parallelepipeds
+        angles_radians = {key: math.radians(value) for key, value in angles_degrees.items()}
+        angles_radians['yaw'] = 0  # Yaw angle is not used in this example
+
+        # Add the Joy-Con to the plot
+        draw_brick(ax, position, angles_radians, length, width, height, color)
+
+    # Adjust axis limits to fit both bricks
     all_x = [
-        left_joy_con_pose[0][0],
-        right_joy_con_pose[0][0] + width,
-        left_joy_con_pose[0][0] + width,
+        cog_left[0],
+        cog_right[0] + width,
+        cog_left[0] + width,
     ]
     all_y = [-width / 2, width / 2, -width / 2, width / 2]
     all_z = [0, height, height]
@@ -158,82 +187,74 @@ def update_drawing(ax, left_joy_con_pose, right_joy_con_pose):
 
     set_axes_equal(ax)  # Ensure equal scaling
 
-    plt.draw()  # Redraw the figure
-
-def orientation_vector(tilt_angle_x, tilt_angle_y):
+def orientation_vector_from_rpy(roll, pitch, yaw):
     """
-    Computes the orientation vector (normal to the main face) based on tilt angles.
-
-    Parameters:
-    - tilt_angle_x: Rotation around the X-axis in radians.
-    - tilt_angle_y: Rotation around the Y-axis in radians.
-
-    Returns:
-    - A unit vector [nx, ny, nz] representing the orientation.
+    Converts roll, pitch, and yaw angles (in radians) to a normal vector.
     """
-    nx = math.sin(tilt_angle_y) * math.cos(tilt_angle_x)
-    ny = math.sin(tilt_angle_x)
-    nz = math.cos(tilt_angle_y) * math.cos(tilt_angle_x)
-    
-    return [nx, ny, nz]  # Normalized by trigonometry
+    # Define the reference vector along the z-axis
+    reference_vector = np.array([0, 0, 1])
 
-# Main execution flow with keyboard interaction using Matplotlib's key event handling
-fig, ax = setup_figure()
+    # Rotation matrices
+    Rz_yaw = np.array([
+        [np.cos(yaw), -np.sin(yaw), 0],
+        [np.sin(yaw),  np.cos(yaw), 0],
+        [0,            0,           1]
+    ])
 
-# Initial poses
-left_tilt_angle_x = 0  # Initial tilt angle around X-axis of left joy-con
-left_tilt_angle_y = 0  # Initial tilt angle around Y-axis of left joy-con
+    Ry_pitch = np.array([
+        [ np.cos(pitch), 0, np.sin(pitch)],
+        [ 0,             1, 0           ],
+        [-np.sin(pitch), 0, np.cos(pitch)]
+    ])
 
-right_tilt_angle_x = 0  # Initial tilt angle around X-axis of right joy-con
-right_tilt_angle_y = 0  # Initial tilt angle around Y-axis of right joy-con
+    Rx_roll = np.array([
+        [1, 0,           0          ],
+        [0, np.cos(roll), -np.sin(roll)],
+        [0, np.sin(roll),  np.cos(roll)]
+    ])
 
-left_joy_con_pose = ([0, 0, 0], orientation_vector(left_tilt_angle_x, left_tilt_angle_y))  # Base at (0,0,0)
-right_joy_con_pose = ([90, 0, 0], orientation_vector(right_tilt_angle_x, right_tilt_angle_y))  # Shifted position
+    # Combined rotation matrix
+    R = Rz_yaw @ Ry_pitch @ Rx_roll
 
-# Initial drawing
-update_drawing(ax, left_joy_con_pose, right_joy_con_pose)
-plt.ion()  # Enable interactive mode
-plt.show()
+    # Apply rotation to the reference vector
+    oriented_vector = R @ reference_vector
 
-# Rotation step in radians
-rotation_step = 5 * (math.pi / 180)  # 5-degree rotation
+    # Normalize the resulting vector
+    oriented_vector /= np.linalg.norm(oriented_vector)
 
-def on_key(event):
-    global left_tilt_angle_y, left_tilt_angle_x, left_joy_con_pose, right_tilt_angle_y, right_tilt_angle_x, right_joy_con_pose
-
-    if event.key == "w":  # Rotate left joy-con up
-        left_tilt_angle_x += rotation_step
-    elif event.key == "s":  # Rotate left joy-con down
-        left_tilt_angle_x -= rotation_step
-    elif event.key == "d":  # Rotate left joy-con left
-        left_tilt_angle_y += rotation_step
-    elif event.key == "a":  # Rotate left joy-con right
-        left_tilt_angle_y -= rotation_step
-    elif event.key == "i":  # Rotate right joy-con up
-        right_tilt_angle_x += rotation_step
-    elif event.key == "k":  # Rotate right joy-con down
-        right_tilt_angle_x -= rotation_step
-    elif event.key == "l":  # Rotate right joy-con left
-        right_tilt_angle_y += rotation_step
-    elif event.key == "j":  # Rotate right joy-con right
-        right_tilt_angle_y -= rotation_step
+    return oriented_vector
 
 
-    # Compute new normal vector with combined rotations
-    left_joy_con_pose = ([0, 0, 0], orientation_vector(left_tilt_angle_x, left_tilt_angle_y))  
-    right_joy_con_pose = ([90, 0, 0], orientation_vector(right_tilt_angle_x, right_tilt_angle_y))  
+async def display_joycons(joycons, interval=0.1):
+    # setup
+    fig, ax = setup_figure()
+    orientations = {joycon.device.name: joycon.get_orientation() for joycon in joycons}
 
-    # Update the drawing with the new pose
-    update_drawing(ax, left_joy_con_pose, right_joy_con_pose)
-    plt.draw()  # Redraw the plot
+    plt.ion()  # Enable interactive mode
+    draw_joycons(orientations, ax) # Initial draw
+    plt.show()
+
+    # loop
+    while True:
+        # update orientations
+        orientations = {joycon.device.name: joycon.get_orientation() for joycon in joycons}
+        
+        ax.cla()
+        draw_joycons(orientations, ax)
+        fig.canvas.draw_idle()  # Schedule a redraw
+        plt.pause(0.001)  # Yield to the GUI event loop
+
+        await asyncio.sleep(interval)
+
+async def main():
+    device_paths = ['/dev/input/event20', '/dev/input/event22']
+    joycons = [myJoyCon(path) for path in device_paths]
+    monitor_tasks = [joycon.monitor() for joycon in joycons]
+    display_task = display_joycons(joycons)
+
+    await asyncio.gather(*monitor_tasks, display_task)
 
 
-# Disable default Matplotlib key bindings (e.g., "s" for save)
-fig.canvas.mpl_disconnect(fig.canvas.manager.key_press_handler_id)
+if __name__ == "__main__":
+    asyncio.run(main())
 
-# Connect key press events
-fig.canvas.mpl_connect("key_press_event", on_key)
-
-# Keep the plot open and responsive
-plt.ioff()  # Disable interactive mode when finished
-plt.show()  # Keep the final state displayed
