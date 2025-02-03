@@ -74,7 +74,7 @@ def add_parallelepiped(ax, pose, length, width, height, color, alpha=0.5):
         poly3d = [[list(vertex) for vertex in face] for face in faces]
         ax.add_collection3d(
             Poly3DCollection(
-                poly3d, facecolors=color, linewidths=1, edgecolors="black", alpha=alpha
+                poly3d, facecolors=color, linewidths=3, edgecolors=color, alpha=alpha
             )
         )
 
@@ -129,24 +129,18 @@ def update_drawing(ax, left_joy_con_pose, right_joy_con_pose):
     """Clears the axes and redraws the parallelepipeds at new poses."""
     ax.cla()  # Clear the axes
 
-    # Reapply labels
-    # ax.set_xlabel("X (mm)")
-    # ax.set_ylabel("Y (mm)")
-    # ax.set_zlabel("Z (mm)")
-
     # Add joy-con L (red)
     success1 = add_parallelepiped(
-        ax, left_joy_con_pose[0] + left_joy_con_pose[1], length, width, height, neon_red
+        ax, left_joy_con_pose[0] + left_joy_con_pose[1], 
+        length, width, height, 
+        neon_red
     )
 
     # Add joy-con R (blue)
     success2 = add_parallelepiped(
-        ax,
-        right_joy_con_pose[0] + right_joy_con_pose[1],
-        length,
-        width,
-        height,
-        neon_blue,
+        ax, right_joy_con_pose[0] + right_joy_con_pose[1],
+        length, width, height,
+        neon_blue
     )
 
     # Adjust axis limits to fit both parallelepipeds
