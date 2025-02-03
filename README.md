@@ -173,7 +173,7 @@ email [adrian@foxglove.dev](adrian@foxglove.dev) , [join our Slack community](ht
 
 ## A quick'n'dirty GUI to display Joy-Con orientation
 
-Used ChatGPT to mock up a quick'n'dirty GUI that would display the orientation of the joycons. As a first step [joy_con_gui.py](./src/joy_con_gui.py) draws two blocks resembling the Joy-Cons and allows to rotate them with the keyboard.
+I mocked up a quick'n'dirty GUI to display the orientation of the Joy-Cons. As a first step [joy_con_gui.py](./src/joy_con_gui.py) draws two blocks resembling the Joy-Cons and allows to rotate them with the keyboard.
 
 ![](./assets/gui.gif)
 
@@ -193,14 +193,14 @@ Used ChatGPT to mock up a quick'n'dirty GUI that would display the orientation o
 - **J** → Rotate **Left** (tilt counterclockwise around Y-axis)
 - **L** → Rotate **Right** (tilt clockwise around Y-axis)
 
-Note one of the rotation axes is missing !
+Note: the Yaw rotation axis is missing !
 
 ## Getting orientation out of the Joy-Cons
 
 Next I want to get the orientation from the motion control data streamed by the Joy-Cons. Like this:
 ![](https://camo.githubusercontent.com/119ef219c6ba003403c63c1455f4498f4f71c4f63ced836c57bbab9811c71495/68747470733a2f2f692e696d6775722e636f6d2f426256365372672e676966)
 
-Inspiration came from this project https://github.com/AlmondGod/Nintendo-Aloha (see blog post [here](https://rain-argon-1fc.notion.site/ALOHA-Bigym-Joycon-ACT-12063b18e1df80f99f84dc2fcc0721ac)) which used this promising python library: https://github.com/tocoteron/joycon-python (there may be some recent forks with added functionality)
+Inspiration came from this project https://github.com/AlmondGod/Nintendo-Aloha (see the [twitter thread](https://x.com/Almondgodd/status/1856891189653340656) and [blog post](https://rain-argon-1fc.notion.site/ALOHA-Bigym-Joycon-ACT-12063b18e1df80f99f84dc2fcc0721ac)) which used this promising python library: https://github.com/tocoteron/joycon-python (there may be some recent forks with added functionality)
 
 ```bash
 $ pip install joycon-python hidapi pyglm
@@ -228,9 +228,9 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", KERNELS=="0005:057E:2009.*", MODE="0666"
 KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="200e", MODE="0666"
 ```
 
-Then reload the rules with: `$ udevadm control --reload-rules`
+After editing the file it is necessary to reload the rules with: `$ udevadm control --reload-rules`
 
-Somwehow I came to the conclusion that this is the problem:
+Somehow I came to the conclusion that this is the problem:
 
 ```bash
 $ sudo modprobe hid_nintendo
@@ -239,7 +239,7 @@ modprobe: FATAL: Module hid_nintendo not found in directory /lib/modules/5.15.0-
 
 I am on ubuntu 20.04 and my kernel version 5.15.0-131 does not include the `hid-nintendo` driver (it was added in kernel 5.16 which corresponds to ubuntu 21.10) 
 
-Tried upgrading the kernel with the following steps and it broke ubuntu (no wifi) so I went back.
+Tried upgrading the kernel with the following steps and broke ubuntu (no wifi) so I went back.
 
 1. Add the latest mainline kernel repository:
 
@@ -275,7 +275,7 @@ $ sudo modprobe hid_nintendo
 
 If successful, `dmesg | grep -i nintendo` should show logs.
 
-Anyways I had to revert. Instead I tried to install it manually:
+Anyway, I had to revert. Instead I tried to install it manually:
 
 Download the `hid-nintendo` Source Code:
 
@@ -289,7 +289,7 @@ $ sudo dkms build nintendo -v 3.2
 $ sudo dkms install nintendo -v 3.2
 ```
 
-After this it seems to work...
+After this it seemed to work...
 
 ```bash
 $ sudo modprobe hid_nintendo
@@ -307,14 +307,171 @@ $ dmesg | grep -i nintendo
 [...]
 ```
 
-But still `hid.enumerate()` does not detect the joycons. 
+But still `hid.enumerate()` did not detect the joycons. 
 
 I'll try on a more modern kernel...
 
-Other options to explore:
+## Other options to explore
 
 * [JoyconLib](https://github.com/Looking-Glass/JoyconLib/blob/master/README.md) is a library for Unity featuring button/stick polling, HD rumble, and accelerometer data processing. By Evan Kahn / @wormyrocks. Discussion: https://gbatemp.net/threads/joy-con-unity-library.486629/
 * [JoyCon-Driver](https://github.com/fossephate/JoyCon-Driver) is a Windows Driver for the Nintendo Switch JoyCons and Pro Controller with support for analog stick and motion controls
 * [Nintendo Switch Reverse Engineering](https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering) all you ever wanted to know about the Nintendo. See this issue: [Gyroscope / Accelerometer Status #18](https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering/issues/18)
-
 * A [Joy Con Web HID](https://tomayac.github.io/joy-con-webhid/) - Web HID driver for [Nintendo Joy-Cons](https://en.wikipedia.org/wiki/Joy-Con) with support for all buttons, analog sticks, and the device’s gyroscope and accelerometer sensors.
+* [Using Nintendo Joy-Cons to Control Rock ‘Em Sock ‘Em Robots](https://www.hackster.io/news/using-nintendo-joy-cons-to-control-rock-em-sock-em-robots-40396d338d74)
+* [Using Nintendo Switch controllers on Linux](https://joaorb64.github.io/2020/04/08/using-nintendo-switch-controllers-on-linux.html) discussion claims installing [dkms-hid_nintendo](https://github.com/nicman23/dkms-hid-nintendo) as a module and the [joycond](https://github.com/DanielOgorchock/joycond) daemon should do the trick, but someone in the comments complains this doesn't work in 20.04...
+* [joycon](https://github.com/riking/joycon) is a Joy-Con input driver for Linux, but motion control is still in their To Do list
+
+## The one that worked
+
+This is a [great summary review of the different options](https://www.reddit.com/r/linux_gaming/comments/fxwh54/using_nintendo_switch_controllers_on_linux/) available by 2020... Claims `hid-nintendo` is present since kernel 5.10, see also [this](https://www.phoronix.com/forums/forum/software/linux-gaming/1204007-nintendo-switch-controller-driver-to-be-upstreamed-with-linux-5-10)
+
+1. install `dkms_hid_nintendo` if the kernel does not include `hid_nintendo`
+
+```bash
+$ git clone https://github.com/nicman23/dkms-hid-nintendo
+$ cd dkms-hid-nintendo
+$ sudo dkms add .
+$ sudo dkms build nintendo -v 3.2
+$ sudo dkms install nintendo -v 3.2
+```
+
+2. install `joycond` driver:
+
+```bash
+$ git clone https://github.com/DanielOgorchock/joycond
+$ sudo apt-get install libevdev-dev
+$ cd joycond
+$ cmake .
+$ sudo make install
+$ sudo systemctl enable --now joycond
+```
+
+3. install the cemu hook
+
+```bash
+$ pip3 install git+https://github.com/joaorb64/joycond-cemuhook
+```
+
+4. Run the hook. 
+5. Connect the Joy-Cons to the PC. First wake them up pressing the black centre button on the side until the LED starts scanning. Otherwise the **Connect** slide switch in the Bluetooth Settings window will not respond. 
+6. Pair them: pressing SL+SR buttons to pair each Joy-Con individually or ZL+ZR to pair them combined
+
+```bash
+$ joycond-cemuhook 
+Looking for Nintendo Switch controllers...
+================= ('127.0.0.1', 26760) ================
+Device         LED status   Battery Lv   MAC Addr    
+1 🕹️ L          ■ □ □ □      55.0 ▄       AC:FA:E4:A4:A2:5B
+2 🕹️ R          ■ ■ □ □      70.0 ▅       AC:FA:E4:A4:36:BC
+3 ❎ 
+4 ❎ 
+=======================================================
+
+
+================= ('127.0.0.1', 26760) ================
+Device         LED status   Battery Lv   MAC Addr    
+1 🎮 L+R       ■ ■ ■ □      55.0 ▄       AC:FA:E4:A4:36:BC
+2 🎮 L+R       ■ ■ ■ □      55.0 ▄       AC:FA:E4:A4:A2:5B
+3 ❎ 
+4 ❎ 
+=======================================================
+
+```
+
+But.. how is motion control data exposed? Turns out.. new dedicated devices have appeared:
+
+```bash
+$ evtest
+No device specified, trying to scan all of /dev/input/event*
+Not running as root, no devices may be available.
+Available devices:
+/dev/input/event20:	Nintendo Switch Left Joy-Con IMU
+/dev/input/event22:	Nintendo Switch Right Joy-Con IMU
+/dev/input/event23:	Nintendo Switch Combined Joy-Cons
+Select the device event number [0-23]: 20
+Input driver version is 1.0.1
+Input device ID: bus 0x5 vendor 0x57e product 0x2006 version 0x8001
+Input device name: "Nintendo Switch Left Joy-Con IMU"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 3 (EV_ABS)
+    Event code 0 (ABS_X)
+      Value    287
+      Min   -32767
+      Max    32767
+      Fuzz      10
+      Resolution    4096
+    Event code 1 (ABS_Y)
+      Value    -18
+      Min   -32767
+      Max    32767
+      Fuzz      10
+      Resolution    4096
+    Event code 2 (ABS_Z)
+      Value   4216
+      Min   -32767
+      Max    32767
+      Fuzz      10
+      Resolution    4096
+    Event code 3 (ABS_RX)
+      Value      0
+      Min   -32767000
+      Max   32767000
+      Fuzz      10
+      Resolution   14247
+    Event code 4 (ABS_RY)
+      Value   1000
+      Min   -32767000
+      Max   32767000
+      Fuzz      10
+      Resolution   14247
+    Event code 5 (ABS_RZ)
+      Value    999
+      Min   -32767000
+      Max   32767000
+      Fuzz      10
+      Resolution   14247
+  Event type 4 (EV_MSC)
+    Event code 5 (MSC_TIMESTAMP)
+Properties:
+  Property type 6 (INPUT_PROP_ACCELEROMETER)
+Testing ... (interrupt to exit)
+Event: time 1738461230.860033, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP), value -711924796
+Event: time 1738461230.860033, type 3 (EV_ABS), code 3 (ABS_RX), value -1999
+Event: time 1738461230.860033, type 3 (EV_ABS), code 4 (ABS_RY), value 3000
+Event: time 1738461230.860033, type 3 (EV_ABS), code 5 (ABS_RZ), value -1999
+Event: time 1738461230.860033, type 3 (EV_ABS), code 0 (ABS_X), value 289
+Event: time 1738461230.860033, type 3 (EV_ABS), code 2 (ABS_Z), value 4218
+Event: time 1738461230.860033, -------------- SYN_REPORT ------------
+Event: time 1738461230.860035, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP), value -711919796
+Event: time 1738461230.860035, type 3 (EV_ABS), code 3 (ABS_RX), value -4998
+Event: time 1738461230.860035, type 3 (EV_ABS), code 4 (ABS_RY), value 1000
+Event: time 1738461230.860035, type 3 (EV_ABS), code 5 (ABS_RZ), value -999
+Event: time 1738461230.860035, type 3 (EV_ABS), code 0 (ABS_X), value 290
+Event: time 1738461230.860035, type 3 (EV_ABS), code 2 (ABS_Z), value 4220
+Event: time 1738461230.860035, -------------- SYN_REPORT ------------
+Event: time 1738461230.860036, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP), value -711914796
+Event: time 1738461230.860036, type 3 (EV_ABS), code 3 (ABS_RX), value -5997
+Event: time 1738461230.860036, type 3 (EV_ABS), code 4 (ABS_RY), value 3000
+Event: time 1738461230.860036, -------------- SYN_REPORT ------------
+Event: time 1738461230.875011, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP), value -711894796
+Event: time 1738461230.875011, type 3 (EV_ABS), code 3 (ABS_RX), value 5997
+Event: time 1738461230.875011, type 3 (EV_ABS), code 4 (ABS_RY), value 2000
+Event: time 1738461230.875011, type 3 (EV_ABS), code 5 (ABS_RZ), value -1999
+Event: time 1738461230.875011, type 3 (EV_ABS), code 2 (ABS_Z), value 4221
+[...]
+```
+
+Net step is writing a python script that connects to the device using  `evdev` and monitors the stream of events to updates an `orientation` state variable. Note the sign conventions.
+
+| ![](./assets/joycon_left_axes.png) | ![](./assets/joycon_right_axes.png) |
+| ---------------------------------- | ----------------------------------- |
+
+`one_joy_con.py`- first attempt at displaying roll pitch yaw for a JoyCon.
+
+`two_joy_cons.py` - improved and encapsulated in a class to display RPY for both JoyCons. Kalman filter is implemented but deactivated because I could not get it to work. Roll is ok, Pitch is clipped +/-90 degrees, Yaw is still a drama...
+
+Next step is to link this with the GUI.
+
+
+
