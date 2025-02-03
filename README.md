@@ -467,11 +467,12 @@ Net step is writing a python script that connects to the device using  `evdev` a
 | ![](./assets/joycon_left_axes.png) | ![](./assets/joycon_right_axes.png) |
 | ---------------------------------- | ----------------------------------- |
 
-`one_joy_con.py`- first attempt at displaying roll pitch yaw for a JoyCon.
+`one_joy_con.py`- first attempt at displaying Roll Pitch Yaw for a JoyCon.
 
 `two_joy_cons.py` - improved and encapsulated in a class to display RPY for both JoyCons. Kalman filter is implemented but deactivated because I could not get it to work. Roll is ok, Pitch is clipped +/-90 degrees, Yaw is still a drama...
 
-<blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:hi46hk2uywvphbiivmqmqibw/app.bsky.feed.post/3lhakwl27rc2a" data-bluesky-cid="bafyreiakm3atx52ywq4ifzyxxtnqmwcmshwptuhnkg267kswozkripgoni"><p lang="en">I’m looking at using a Nintendo Switch to control my robots. Joy-Cons promise to be fun, and I had a first breakthrough today. A short video, and details in the repo: github.com/mhered/ninte...<br><br><a href="https://bsky.app/profile/did:plc:hi46hk2uywvphbiivmqmqibw/post/3lhakwl27rc2a?ref_src=embed">[image or embed]</a></p>&mdash; Manuel Heredia (<a href="https://bsky.app/profile/did:plc:hi46hk2uywvphbiivmqmqibw?ref_src=embed">@aergenium.bsky.social</a>) <a href="https://bsky.app/profile/did:plc:hi46hk2uywvphbiivmqmqibw/post/3lhakwl27rc2a?ref_src=embed">February 3, 2025 at 4:09 AM</a></blockquote><script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+Check out the video in this [February 3, 2025 at 4:09 AM post](https://bsky.app/profile/did:plc:hi46hk2uywvphbiivmqmqibw/post/3lhakwl27rc2a) by [@aergenium.bsky.social](https://bsky.app/profile/aergenium.bsky.social):
+> I’m looking at using a Nintendo Switch to control my robots. Joy-Cons promise to be fun, and I had a first breakthrough today. A short video, and details in the repo: github.com/mhered/ninte...
 
 Next step is to link this with the GUI.
 
